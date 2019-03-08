@@ -7,10 +7,10 @@ import sys
 import os
 
 with open('faceapi.json') as file:
-    json = json.load(file)
-    key = json['key']
-    BASE_URL = json['serviceUrl']
-    group = json['groupId']
+    json2 = json.load(file)
+    key = json2['key']
+    BASE_URL = json2['serviceUrl']
+    group = json2['groupId']
 
 cf.BaseUrl.set(BASE_URL)
 
@@ -107,7 +107,7 @@ def recognize(file_name, group, user_id):
     return face_ids
 
 def delete_person(group, person_id):
-    e = cf.person.delete(group, name)
+    e = cf.person.delete(group, person_id)
     return e
 
 def list_of_users(group):
@@ -134,7 +134,8 @@ def identification(file_name, group):
     cap.release()
     k = 0
     faceIds = []
-    candidates = []
+    candidates_person_id = []
+    candidates_confidence = []
 
     while k < 5:
         beg = -1
@@ -171,11 +172,14 @@ def identification(file_name, group):
     candidates_info = cf.face.identify(faceIds, person_group_id=group)  
 
     for i in range(5):
-        candidates.append(candidates_info[i]['candidates'])
-    if (candidates[0]['personId'] == candidates[1]['personId'] == candidates[2]['personId'] == candidates[3]['personId'] == candidates[4]['personId']) and (candidates[0]['confidence'] >= 0.5) and (candidates[1]['confidence'] >= 0.5) and (candidates[2]['confidence'] >= 0.5) and (candidates[3]['confidence'] >= 0.5) and (candidates[4]['confidence'] >= 0.5):
-        candidate_id = candidates[0]['personId']
-        f= open("person.json","w+")
-        f.write(json.dumps({"id": str(candidates[0]['personId'])}))
+        candidates_person_id.append(candidates_info[i]['candidates'][0]['personId'])
+        candidates_confidence.append(candidates_info[i]['candidates'][0]['confidence'])
+    if (candidates_person_id[0] == candidates_person_id[1] == candidates_person_id[2] == candidates_person_id[3] == candidates_person_id[4]) and (candidates_confidence[0] >= 0.5) and (candidates_confidence[1] >= 0.5) and (candidates_confidence[2] >= 0.5) and (candidates_confidence[3] >= 0.5) and (candidates_confidence[4] >= 0.5):
+        candidate_id = candidates_person_id[0]
+        d = {'id': candidate_id}
+        with open("person.json","w") as f:
+            json.dump(d, f)
+            f.write('\n')
     else:
         print('The person was not found')
         try:
@@ -258,6 +262,12 @@ if args[0] == '--list':
             sys.exit()
 if args[0] == '--find':
     file_name = args[1]
+    try:
+       cf.person_group.get(group)
+    except cf.CognitiveFaceException as err:
+         if err.code == 'PersonGroupNotFound':
+                print('The group does not exist')
+                sys.exit()
     if cf.person_group.get(group)['userData'] == 'group_train':
         identification(file_name, group)
     elif cf.person_group.get(group)['userData'] == 'group_update':
