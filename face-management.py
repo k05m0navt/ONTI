@@ -186,7 +186,7 @@ def identification(file_name, group):
             os.remove('person.json')
         except FileNotFoundError:
             pass
-        sys.exit()
+
 
 args = (sys.argv)[1:]
 datetime_object = datetime.datetime.now()
@@ -198,6 +198,13 @@ if args[0] == '--simple-add':
     try:
         cf.person_group.create(group)
     except:
+        pass
+    identification(file_name, group)
+    try:
+        open("person.json", 'a')
+        print("User is in the group")
+        sys.exit()
+    except FileNotFoundError:
         pass
     user_id = add_new_person(group, name)
     ids = recognize(file_name, group, user_id['personId'])
