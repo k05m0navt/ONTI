@@ -6,6 +6,17 @@ import datetime
 import sys
 import os
 
+def head_attrib(file_name):
+    face_return = cf.face.detect(file_name, face_id=False, attributes='headPose', landmarks=True)
+    upper_lip_top = face_return[0]['faceLandmarks']['upperLipTop']
+    upper_lip_bottom = face_return[0]['faceLandmarks']['upperLipBottom']
+    under_lip_top = face_return[0]['faceLandmarks']['underLipTop']
+    under_lip_bottom = face_return[0]['faceLandmarks']['underLipBottom']
+    pupil_left = face_return[0]['faceLandmarks']['pupilLeft']
+    pupil_right = face_return[0]['faceLandmarks']['pupilRight']
+    roll = face_return[0]['faceAttributes']['headPose']['roll']
+    yaw = face_return[0]['faceAttributes']['headPose']['yaw']
+    return pupil_left, pupil_right
 def add_new_person(group, name):
     user_id = cf.person.create(group, name)
     return user_id

@@ -5,7 +5,8 @@ import cv2
 import datetime
 import sys
 import os
-from face_lib import add_new_person, checker, recognize, delete_person, list_of_users, train, update_user_data, identification
+from face_lib import add_new_person, checker, recognize, delete_person, list_of_users, train, update_user_data, identification, head_attrib
+import math
 
 with open('faceapi.json') as file:
     json2 = json.load(file)
@@ -103,32 +104,8 @@ if args[0] == '--list':
         if err.code == 'PersonGroupNotFound':
             print('The group does not exist')
             sys.exit()
-'''
-if args[0] == '--find':
+if args[0] == '--add':
     file_name = args[1]
-    try:
-       cf.person_group.get(group)
-    except cf.CognitiveFaceException as err:
-         if err.code == 'PersonGroupNotFound':
-                print('The group does not exist')
-                sys.exit()
-    if cf.person_group.get(group)['userData'] == 'group_train':
-        identification(file_name, group)
-    elif cf.person_group.get(group)['userData'] == 'group_update':
-        print('The service is not ready')
-        try:
-            os.remove('person.json')
-        except FileNotFoundError:
-            pass
-        sys.exit()
-    try:
-        cf.person_group.get(group)
-    except cf.CognitiveFaceException as err:
-        if err.code == 'PersonGroupNotFound':
-            print('The service is not ready')
-            try:
-                os.remove('person.json')
-            except FileNotFoundError:
-                pass
-            sys.exit()
-'''
+    pupil_left, pupil_right = head_attrib(file_name)
+    print(pupil_left, pupil_right)
+    
