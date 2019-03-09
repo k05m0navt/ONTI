@@ -32,18 +32,16 @@ if args[0] == '--simple-add':
         cf.person_group.create(group)
     except:
         pass
-    '''
     try:
         identification(file_name, group)
     except:
         pass
     try:
         open("person.json", 'a')
-        print("User is in the group")
+        print("User is in the group") #Change message for US-009
         sys.exit()
     except FileNotFoundError:
         pass
-    '''
     user_id = add_new_person(group, name)
     ids = recognize(file_name, group, user_id['personId'])
     message = 'group_update'
