@@ -17,6 +17,7 @@ def head_attrib(file_name):
     roll = face_return[0]['faceAttributes']['headPose']['roll']
     yaw = face_return[0]['faceAttributes']['headPose']['yaw']
     return pupil_left, pupil_right
+    
 def add_new_person(group, name):
     user_id = cf.person.create(group, name)
     return user_id
