@@ -5,8 +5,11 @@ import cv2
 import datetime
 import sys
 import os
-from face_lib import add_new_person, checker, recognize, delete_person, list_of_users, train, update_user_data, identification, head_attrib
+from face_lib import add_new_person, checker, recognize, delete_person, list_of_users, train, update_user_data, identification, head_attrib, identification_for_simple_add, recognize_for_add2
 import math
+from imutils.video import VideoStream, FileVideoStream
+from imutils import face_utils
+import imutils
 
 with open('faceapi.json') as file:
     json2 = json.load(file)
@@ -34,14 +37,8 @@ if args[0] == '--simple-add':
     except:
         pass
     try:
-        identification(file_name, group)
+        identification_for_simple_add(file_name, group)
     except:
-        pass
-    try:
-        open("person.json", 'a')
-        print("User is in the group") #Change message for US-009
-        sys.exit()
-    except FileNotFoundError:
         pass
     user_id = add_new_person(group, name)
     ids = recognize(file_name, group, user_id['personId'])
@@ -104,8 +101,3 @@ if args[0] == '--list':
         if err.code == 'PersonGroupNotFound':
             print('The group does not exist')
             sys.exit()
-if args[0] == '--add':
-    file_name = args[1]
-    pupil_left, pupil_right = head_attrib(file_name)
-    print(pupil_left, pupil_right)
-    

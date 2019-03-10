@@ -7,6 +7,7 @@ import json
 import cognitive_face as cf
 import os
 from face_lib import add_new_person, checker, recognize, delete_person, list_of_users, train, update_user_data, identification, checker_for_find
+import random
 
 def GetGas(URL, defGas):
     try:
@@ -293,6 +294,10 @@ if args[0] == '--find':
     except cf.CognitiveFaceException as err:
          if err.code == 'PersonGroupNotFound':
                 print('The service is not ready')
+                try:
+                    os.remove('person.json')
+                except FileNotFoundError:
+                    pass
                 sys.exit()
     if cf.person_group.get(group)['userData'] == 'group_train':
         identification(file_name, group)
@@ -303,13 +308,38 @@ if args[0] == '--find':
         except FileNotFoundError:
             pass
         sys.exit()
+
+if args[0] == '--actions':
+    actions = []
+    naklon = ["RollRight", "RollLeft"]
+    povorot = ["YawRight", "YawLeft"]
+    others = ["CloseRightEye", "CloseLeftEye", "OpenMouth"]
+    kolvo = random.randint(3, 4)
+    kolvo_n = random.randint(0, 1)
+    if kolvo_n == 0:
+        kolvo_others = random.randint(3, 4)
+        kolvo_p = kolvo - kolvo_others
+    if kolvo_n == 1:
+        kolvo_others = random.randint(2, 3)
+        kolvo_p = kolvo - kolvo_n - kolvo_others
     try:
-        cf.person_group.get(group)
-    except cf.CognitiveFaceException as err:
-        if err.code == 'PersonGroupNotFound':
-            print('The service is not ready')
-            try:
-                os.remove('person.json')
-            except FileNotFoundError:
-                pass
-            sys.exit()
+        for i in range(kolvo_n):
+            num = random.randint(0, 1)
+            actions.append(naklon[num])
+    except:
+        pass
+    try:
+        for i in range(kolvo_p):
+            num = random.randint(0, 1)
+            actions.append(povorot[num])
+    except:
+        pass
+    for i in range(kolvo_others):
+        num = random.randint(0, 2)
+        actions.append(others[num])
+    
+    otvet = {"actions": actions}
+    with open("actions.json","w+") as f:
+        json.dump(otvet, f)
+        f.write('\n')
+
