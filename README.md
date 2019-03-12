@@ -1,2 +1,0 @@
-# ONTI
-MS Face API
